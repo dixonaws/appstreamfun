@@ -6,11 +6,24 @@ app = Chalice(app_name='appstreaminvoker')
 
 client=boto3.client('appstream', region_name='eu-central-1')
 
-
 @app.route('/')
 def index():
     # create a streaming URL for the app
-    response = client.create_streaming_url(StackName='dixonaws-AppstreamTestStack',FleetName='dixonaws-Appstream2Fleet', UserId='dixonaws',ApplicationId='notepad++')
+
+    # list the available apps in a JSON object
+    dict_response={}
+    dict_available_apps={}
+    dict_available_apps['Notepad++']='notepad'
+    dict_available_apps['Google Chrome']='chrome_x64_v75.0.3770.100'
+    dict_response['AvailableApps']=dict_available_apps
+
+    return(json.dumps(dict_response))
+
+
+@app.route('/notepad')
+def notepad():
+    # create a streaming URL for the app
+    response = client.create_streaming_url(StackName='dixonaws-Appstream2Fleet-on',FleetName='dixonaws-Appstream2fleet-on', UserId='dixonaws',ApplicationId='notepad++')
 
     # print the url to CloudWatch
     print(response['StreamingURL'])
@@ -20,23 +33,18 @@ def index():
 
     return(json.dumps(dict_response))
 
+@app.route('/chrome')
+def chrome():
+    # create a streaming URL for the app
+    response = client.create_streaming_url(StackName='dixonaws-Appstream2Fleet-on',
+                                           FleetName='dixonaws-Appstream2fleet-on', UserId='dixonaws',
+                                           ApplicationId='chrome_x64_v75.0.3770.100')
 
-# The view function above will return {"hello": "world"}
-# whenever you make an HTTP GET request to '/'.
-#
-# Here are a few more examples:
-#
-# @app.route('/hello/{name}')
-# def hello_name(name):
-#    # '/hello/james' -> {"hello": "james"}
-#    return {'hello': name}
-#
-# @app.route('/users', methods=['POST'])
-# def create_user():
-#     # This is the JSON body the user sent in their POST request.
-#     user_as_json = app.current_request.json_body
-#     # We'll echo the json body back to the user in a 'user' key.
-#     return {'user': user_as_json}
-#
-# See the README documentation for more examples.
-#
+    # print the url to CloudWatch
+    print(response['StreamingURL'])
+
+    dict_response = {}
+    dict_response['StreamingURL'] = response['StreamingURL']
+
+    return (json.dumps(dict_response))
+
