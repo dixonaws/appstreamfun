@@ -1,2 +1,8 @@
 venv/
 .idea/
+<<<<<<< HEAD
+=======
+.chalice/
+__pycache__/
+
+>>>>>>> 6286863b718aeb16d5c48267a9d54e804a2b5ade
